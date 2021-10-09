@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time : 2021/10/7 11:02
-# @Desc : 秀人美女网（xrmn.top）以搜索页为入口
+# @Desc : xrmn.top (以搜索页为入口)
 
 import os
 import time
@@ -19,13 +19,10 @@ def process_index_page(index_url, page_limit, page_no):
         # 解析当前页（请求详情页）
         sousuos = ehtml.xpath("//div[@class='sousuo']")
         for sousuo in sousuos:
-            whole_title = ''
-            title = sousuo.xpath("div[@class='title']/h2/a/span/text()")
-            for t in title:
-                whole_title += t
-            href = sousuo.xpath("div[@class='title']/h2/a/@href")[0]
-            detail_url = 'https://www.xrmn5.com/' + href
-            process_detail_page(detail_url, whole_title.replace('  \xa0 ', ' '), 1)
+            title_prefix = sousuo.xpath("div[@class='title']/h2/a/span/text()")
+            title = ''.join(title_prefix).strip()
+            detail_url = 'https://www.xrmn5.com' + sousuo.xpath("div[@class='title']/h2/a/@href")[0]
+            process_detail_page(detail_url, title, 1)
             time.sleep(3)
         # 判断翻页
         if page_no == 1:
@@ -46,7 +43,7 @@ def process_detail_page(detail_url, title, page_no):
     # 解析当前页（保存图片）
     imgs = ehtml.xpath("//div[@class='content_left']/p/img/@src")
     for i in range(0, len(imgs)):
-        img_url = 'https://pic.xrmn5.com/' + imgs[i]
+        img_url = 'https://pic.xrmn5.com' + imgs[i]
         save2local(img_url, title, page_no, i)
     # 判断翻页
     if page_no == 1:
@@ -89,4 +86,4 @@ def main(keyword, page_limit):
 
 
 if __name__ == '__main__':
-    main('朱可儿', 2)
+    main('安然', 1)
