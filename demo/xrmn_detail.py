@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time : 2021/10/7 11:02
-# @Desc : 秀人美女网（xrmn.top）以详情页为入口
+# @Desc : xrmn.top (以详情页为入口)
 
 import os
 import time
@@ -12,26 +12,23 @@ from lxml import html
 
 
 def process_detail_page(detail_url, page_no):
-    try:
-        resp = get_resp(detail_url)
-        ehtml = html.etree.HTML(resp.text)
-        title_prefix = ehtml.xpath("//div[@class='item_title']/h1/text()")[0]
-        update_date = ehtml.xpath("//div[@class='item_info']/div/span[2]/text()")[0]
-        title = title_prefix + ' 更新时间：' + update_date
-        # 解析当前页（保存图片）
-        imgs = ehtml.xpath("//div[@class='content_left']/p/img/@src")
-        for i in range(0, len(imgs)):
-            img_url = 'https://pic.xrmn5.com/' + imgs[i]
-            save2local(img_url, title, page_no, i)
-        # 判断翻页
-        if page_no == 1:
-            pages = ehtml.xpath("//div[@class='page']/a/@href")
-            for i in range(1, len(pages) - 1):
-                more_detail_url = 'https://www.xrmn5.com' + pages[i]
-                process_detail_page(more_detail_url, i + 1)
-                time.sleep(3)
-    except Exception:
-        traceback.print_exc()
+    resp = get_resp(detail_url)
+    ehtml = html.etree.HTML(resp.text)
+    title_prefix = ehtml.xpath("//div[@class='item_title']/h1/text()")[0]
+    update_date = ehtml.xpath("//div[@class='item_info']/div/span[2]/text()")[0]
+    title = title_prefix + ' 更新时间：' + update_date
+    # 解析当前页（保存图片）
+    imgs = ehtml.xpath("//div[@class='content_left']/p/img/@src")
+    for i in range(0, len(imgs)):
+        img_url = 'https://pic.xrmn5.com' + imgs[i]
+        save2local(img_url, title, page_no, i)
+    # 判断翻页
+    if page_no == 1:
+        pages = ehtml.xpath("//div[@class='page']/a/@href")
+        for i in range(1, len(pages) - 1):
+            more_detail_url = 'https://www.xrmn5.com' + pages[i]
+            process_detail_page(more_detail_url, i + 1)
+            time.sleep(3)
 
 
 def get_resp(req_url):
@@ -43,7 +40,7 @@ def get_resp(req_url):
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
     }
     session = requests.Session()
-    resp = session.get(req_url, headers=headers)
+    resp = session.get(req_url, headers=headers, timeout=10)
     resp.encoding = 'utf-8'  # 防止中文乱码
     return resp
 
@@ -62,6 +59,9 @@ def save2local(img_url, title, page_no, i):
 
 
 if __name__ == '__main__':
-    detail_url = 'https://www.xrmn5.com/XiuRen/2021/20218487.html'
-    process_detail_page(detail_url, 1)
+    detail_url = 'https://www.xrmn5.com/Imiss/2021/20219232.html'
+    try:
+        process_detail_page(detail_url, 1)
+    except Exception:
+        traceback.print_exc()
     print('crawl finished!')

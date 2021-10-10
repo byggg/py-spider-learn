@@ -5,24 +5,25 @@
 
 import os
 import time
+import traceback
 
 import requests
 from lxml import html
 
 
 # 处理搜索列表页
-def process_index_page(index_url, referer_url, page_limit, page_no):
+def process_search_page(search_url, referer_url, page_limit, page_no):
     print('======== 开始下载第 %d 页 ========' % page_no)
-    resp = get_resp(index_url, referer_url)
+    resp = get_resp(search_url, referer_url)
     ehtml = html.etree.HTML(resp.text)
     # 解析当前页（请求详情页）
-    node_list = ehtml.xpath("//div[@class='node']")
-    for node in node_list:
-        title_prefix = node.xpath("div[@class='title']/h2/a/b/text()")
-        update_date = node.xpath("div[@class='info']/span/text()")[0]
-        title = '_'.join(title_prefix) + ' 更新时间：' + update_date
-        detail_url = 'https://www.jpxgmn.top' + node.xpath("div[@class='title']/h2/a/@href")[0]
-        process_detail_page(detail_url, index_url, title, 1)
+    node_list = ehtml.xpath("//div[@class='node']/div[@class='title']/h2/a")
+    for i in range(0, len(node_list)):
+        title_prefix = node_list[i].xpath("b/text()")
+        update_date = ehtml.xpath("//div[@class='node']/div[@class='info']/span/text()")[i]
+        title = '_'.join(title_prefix).strip() + ' 更新时间：' + update_date
+        detail_url = 'https://www.jpxgmn.top' + node_list[i].xpath("@href")[0]
+        process_detail_page(detail_url, search_url, title, 1)
         time.sleep(3)
         # 判断翻页
         if page_no == 1:
@@ -30,8 +31,8 @@ def process_index_page(index_url, referer_url, page_limit, page_no):
             len_hrefs = len(hrefs)
             page_count = page_limit if len_hrefs >= page_limit else len_hrefs
             for i in range(1, page_count):
-                more_index_url = 'https://www.jpxgmn.top/plus/search/index.asp' + hrefs[i]
-                process_index_page(more_index_url, index_url, page_limit, i + 1)
+                more_search_url = 'https://www.jpxgmn.top/plus/search/index.asp' + hrefs[i]
+                process_search_page(more_search_url, search_url, page_limit, i + 1)
                 time.sleep(5)
 
 
@@ -42,7 +43,8 @@ def process_detail_page(detail_url, referer_url, title, page_no):
     # 解析当前页（保存图片）
     imgs = ehtml.xpath("//article[@class='article-content']/p/img/@src")
     for i in range(0, len(imgs)):
-        img_url = 'https://p.jpxgmn.top' + imgs[i]
+        real_path = str(imgs[i]).replace('uploadfile', 'Uploadfile')  # 不替换则无法正常访问图片
+        img_url = 'https://p.jpxgmn.top' + real_path
         save2local(img_url, title, page_no, i)
     # 判断翻页
     if page_no == 1:
@@ -62,7 +64,7 @@ def get_resp(req_url, referer_url):
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
     }
     session = requests.Session()
-    resp = session.get(req_url, headers=headers)
+    resp = session.get(req_url, headers=headers, timeout=10)
     return resp
 
 
@@ -80,11 +82,14 @@ def save2local(img_url, title, page_no, i):
 
 
 def main(keyword, page_limit):
-    index_url = 'https://www.jpxgmn.top/plus/search/index.asp?keyword=' + keyword
-    index_referer = 'https://www.jpxgmn.top/'
-    process_index_page(index_url, index_referer, page_limit, 1)
+    search_url = 'https://www.jpxgmn.top/plus/search/index.asp?keyword=' + keyword
+    search_referer = 'https://www.jpxgmn.top/'
+    try:
+        process_search_page(search_url, search_referer, page_limit, 1)
+    except Exception:
+        traceback.print_exc()
     print('crawl finished!')
 
 
 if __name__ == '__main__':
-    main('唐安琪', 1)
+    main('郑颖姗', 1)
