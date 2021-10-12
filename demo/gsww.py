@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time : 2021/10/9 19:54
-# @Desc : 古诗文网-首页推荐（https://www.gushiwen.cn/）
+# @Desc : 古诗文网（https://www.gushiwen.cn/）
 
-def main():
-    pass
+class GsswRecommend(object):
+    """推荐"""
+
+    def __init__(self):
+        pass
 
 
 if __name__ == '__main':
-    main()
+    gsswRecommend = GsswRecommend()
