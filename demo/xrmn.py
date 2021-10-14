@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time : 2021/10/7 11:02
-# @Desc : xrmn.top (以搜索页为入口)
+# @Desc : xrmn.top
 
 import os
 import time

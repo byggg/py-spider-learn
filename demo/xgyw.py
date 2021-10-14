@@ -33,7 +33,7 @@ class XgywSearch(object):
         ehtml = html.etree.HTML(resp.text)
         # 解析当前页（请求详情页）
         node_list = ehtml.xpath("//div[@class='node']/div[@class='title']/h2/a")
-        for i in range(0, len(node_list)):
+        for i in range(8, len(node_list)):
             title_prefix = node_list[i].xpath("b/text()")
             update_date = ehtml.xpath("//div[@class='node']/div[@class='info']/span/text()")[i]
             title = '_'.join(title_prefix).strip() + ' 更新时间：' + update_date
@@ -41,14 +41,14 @@ class XgywSearch(object):
             self.process_pics_page(detail_url, search_url, title, 1)
             time.sleep(3)
             # 判断翻页
-            if page_no == 1:
-                hrefs = ehtml.xpath("//div[@class='list']/div[@class='pagination']/ul/a/@href")
-                len_hrefs = len(hrefs)
-                page_count = page_limit if len_hrefs >= page_limit else len_hrefs
-                for i in range(1, page_count):
-                    more_search_url = 'https://www.jpxgmn.top/plus/search/index.asp' + hrefs[i]
-                    self.process_search_page(more_search_url, search_url, page_limit, i + 1)
-                    time.sleep(5)
+        if page_no == 1:
+            hrefs = ehtml.xpath("//div[@class='list']/div[@class='pagination']/ul/a/@href")
+            len_hrefs = len(hrefs)
+            page_count = page_limit if len_hrefs >= page_limit else len_hrefs
+            for i in range(1, page_count):
+                more_search_url = 'https://www.jpxgmn.top/plus/search/index.asp' + hrefs[i]
+                self.process_search_page(more_search_url, search_url, page_limit, i + 1)
+                time.sleep(5)
 
     # 处理套图列表页
     def process_pics_page(self, detail_url, referer_url, title, page_no):
@@ -159,6 +159,6 @@ class XgywPics(object):
 
 if __name__ == '__main__':
     xgywSearch = XgywSearch()
-    xgywSearch.seed_process('梦心月', 13)
+    xgywSearch.seed_process('过期米线线喵', 1)
     # xgywPics = XgywPics()
     # xgywPics.seed_process('https://www.jpxgmn.top/XiaoYu/XiaoYu19228.html')
