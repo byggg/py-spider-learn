@@ -40,7 +40,7 @@ class XgywSearch(object):
             detail_url = 'https://www.jpxgmn.top' + node_list[i].xpath("@href")[0]
             self.process_pics_page(detail_url, search_url, title, 1)
             time.sleep(3)
-            # 判断翻页
+        # 判断翻页
         if page_no == 1:
             hrefs = ehtml.xpath("//div[@class='list']/div[@class='pagination']/ul/a/@href")
             len_hrefs = len(hrefs)
