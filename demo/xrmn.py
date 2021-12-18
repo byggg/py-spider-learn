@@ -18,7 +18,7 @@ class XrmnSearch(object):
         pass
 
     def seed_process(self, keyword, page_limit):
-        search_url = 'https://www.xrmn5.com/plus/search/index.asp?keyword=' + keyword
+        search_url = 'https://www.xrmn5.cc/plus/search/index.asp?keyword=' + keyword
         try:
             self.process_search_page(search_url, page_limit, 1)
         except Exception:
@@ -35,16 +35,16 @@ class XrmnSearch(object):
         for sousuo in sousuos:
             title_prefix = sousuo.xpath("div[@class='title']/h2/a/span/text()")
             title = ''.join(title_prefix).strip()
-            detail_url = 'https://www.xrmn5.com' + sousuo.xpath("div[@class='title']/h2/a/@href")[0]
+            detail_url = 'https://www.xrmn5.cc' + sousuo.xpath("div[@class='title']/h2/a/@href")[0]
             self.process_pics_page(detail_url, title, 1)
-            time.sleep(3)
+            time.sleep(5)
         # 判断翻页
         if page_no == 1:
             hrefs = ehtml.xpath("//div[@class='page']/a/@href")
             len_hrefs = len(hrefs)
             page_count = page_limit if len_hrefs >= page_limit else len_hrefs
             for i in range(1, page_count):
-                more_search_url = 'https://www.xrmn5.com/plus/search/index.asp' + hrefs[i]
+                more_search_url = 'https://www.xrmn5.cc/plus/search/index.asp' + hrefs[i]
                 self.process_search_page(more_search_url, page_limit, i + 1)
                 time.sleep(5)
 
@@ -55,13 +55,14 @@ class XrmnSearch(object):
         # 解析当前页（保存图片）
         imgs = ehtml.xpath("//div[@class='content_left']/p/img/@src")
         for i in range(0, len(imgs)):
-            img_url = 'https://p.xrmn5.com' + imgs[i]
+            real_path = str(imgs[i]).replace('uploadfile', 'Uploadfile')  # 不替换则无法正常访问图片
+            img_url = 'https://p.xrmn5.cc' + real_path
             self.save2local(img_url, title, page_no, i)
         # 判断翻页
         if page_no == 1:
             pages = ehtml.xpath("//div[@class='page']/a/@href")
             for i in range(1, len(pages) - 1):
-                more_detail_url = 'https://www.xrmn5.com' + pages[i]
+                more_detail_url = 'https://www.xrmn5.cc' + pages[i]
                 self.process_pics_page(more_detail_url, title, i + 1)
 
     def get_resp(self, req_url):
@@ -112,15 +113,16 @@ class XrmnPics(object):
         # 解析当前页（保存图片）
         imgs = ehtml.xpath("//div[@class='content_left']/p/img/@src")
         for i in range(0, len(imgs)):
-            img_url = 'https://p.xrmn5.com' + imgs[i]
+            real_path = str(imgs[i]).replace('uploadfile', 'Uploadfile')  # 不替换则无法正常访问图片
+            img_url = 'https://p.xrmn5.cc' + real_path
             self.save2local(img_url, title, page_no, i)
         # 判断翻页
         if page_no == 1:
             pages = ehtml.xpath("//div[@class='page']/a/@href")
             for i in range(1, len(pages) - 1):
-                more_detail_url = 'https://www.xrmn5.com' + pages[i]
+                more_detail_url = 'https://www.xrmn5.cc' + pages[i]
                 self.process_pics_page(more_detail_url, i + 1)
-                time.sleep(3)
+                time.sleep(5)
 
     def get_resp(self, req_url):
         headers = {
@@ -149,7 +151,7 @@ class XrmnPics(object):
 
 
 if __name__ == '__main__':
-    xrmnSearch = XrmnSearch()
-    xrmnSearch.seed_process('yoo优优', 3)
-    # xrmnPics = XrmnPics()
-    # xrmnPics.seed_process('https://www.xrmn5.com/XiuRen/2021/20219093.html')
+    # xrmnSearch = XrmnSearch()
+    # xrmnSearch.seed_process('yoo优优', 3)
+    xrmnPics = XrmnPics()
+    xrmnPics.seed_process('https://www.xrmn5.cc/XiaoYu/2021/20219435.html')
