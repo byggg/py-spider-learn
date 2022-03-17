@@ -18,8 +18,8 @@ class XgywSearch(object):
         pass
 
     def seed_process(self, keyword, page_limit):
-        search_url = 'https://www.jpxgmn.net/plus/search/index.asp?keyword=' + keyword
-        search_referer = 'https://www.jpxgmn.net/'
+        search_url = 'https://www.jpxgyw.net/plus/search/index.asp?keyword=' + keyword
+        search_referer = 'https://www.jpxgyw.net/'
         try:
             self.process_search_page(search_url, search_referer, page_limit, 1)
         except Exception:
@@ -37,7 +37,7 @@ class XgywSearch(object):
             title_prefix = node_list[i].xpath("b/text()")
             update_date = ehtml.xpath("//div[@class='node']/div[@class='info']/span/text()")[i]
             title = '_'.join(title_prefix).strip() + ' 更新时间：' + update_date
-            detail_url = 'https://www.jpxgmn.net' + node_list[i].xpath("@href")[0]
+            detail_url = 'https://www.jpxgyw.net' + node_list[i].xpath("@href")[0]
             self.process_pics_page(detail_url, search_url, title, 1)
             time.sleep(3)
         # 判断翻页
@@ -46,7 +46,7 @@ class XgywSearch(object):
             len_hrefs = len(hrefs)
             page_count = page_limit if len_hrefs >= page_limit else len_hrefs
             for i in range(1, page_count):
-                more_search_url = 'https://www.jpxgmn.net/plus/search/index.asp' + hrefs[i]
+                more_search_url = 'https://www.jpxgyw.net/plus/search/index.asp' + hrefs[i]
                 self.process_search_page(more_search_url, search_url, page_limit, i + 1)
                 time.sleep(5)
 
@@ -58,14 +58,14 @@ class XgywSearch(object):
         imgs = ehtml.xpath("//article[@class='article-content']/p/img/@src")
         for i in range(0, len(imgs)):
             real_path = str(imgs[i]).replace('uploadfile', 'Uploadfile')  # 不替换则无法正常访问图片
-            img_url = 'https://p.jpxgmn.net' + real_path
+            img_url = 'https://p.jpxgyw.net' + real_path
             self.save2local(img_url, title, page_no, i)
         # 判断翻页
         if page_no == 1:
             single_pages = ehtml.xpath("//div[@class='pagination']")[0]  # 存在2个pagination
             pages = single_pages.xpath("ul/a/@href")
             for i in range(1, len(pages) - 1):
-                more_detail_url = 'https://www.jpxgmn.net' + pages[i]
+                more_detail_url = 'https://www.jpxgyw.net' + pages[i]
                 self.process_pics_page(more_detail_url, detail_url, title, i + 1)
 
     def get_resp(self, req_url, referer_url):
@@ -90,7 +90,7 @@ class XgywSearch(object):
         else:
             print(">>> %s 目录已经存在!" % file_dir)
         with open(file_dir + '/%d_%d.jpg' % (page_no, i), 'wb') as f:
-            resp = self.get_resp(img_url, 'https://www.jpxgmn.net/')
+            resp = self.get_resp(img_url, 'https://www.jpxgyw.net/')
             f.write(resp.content)
 
 
@@ -101,7 +101,7 @@ class XgywPics(object):
         pass
 
     def seed_process(self, detail_url):
-        referer_url = 'https://www.jpxgmn.net/'
+        referer_url = 'https://www.jpxgyw.net/'
         try:
             self.process_pics_page(detail_url, referer_url, 1)
         except Exception:
@@ -119,14 +119,14 @@ class XgywPics(object):
         imgs = ehtml.xpath("//article[@class='article-content']/p/img/@src")
         for i in range(0, len(imgs)):
             real_path = str(imgs[i]).replace('uploadfile', 'Uploadfile')  # 不替换则无法正常访问图片
-            img_url = 'https://p.jpxgmn.net' + real_path
+            img_url = 'https://p.jpxgyw.net' + real_path
             self.save2local(img_url, title, page_no, i)
         # 判断翻页
         if page_no == 1:
             single_pages = ehtml.xpath("//div[@class='pagination']")[0]  # 存在2个pagination
             pages = single_pages.xpath("ul/a/@href")
             for i in range(1, len(pages) - 1):
-                more_detail_url = 'https://www.jpxgmn.net' + pages[i]
+                more_detail_url = 'https://www.jpxgyw.net' + pages[i]
                 self.process_pics_page(more_detail_url, detail_url, i + 1)
                 time.sleep(3)
 
@@ -153,7 +153,7 @@ class XgywPics(object):
         else:
             print(">>> %s 目录已经存在!" % file_dir)
         with open(file_dir + '/%d_%d.jpg' % (page_no, i), 'wb') as f:
-            resp = self.get_resp(img_url, 'https://www.jpxgmn.net/')
+            resp = self.get_resp(img_url, 'https://www.jpxgyw.net/')
             f.write(resp.content)
 
 
@@ -161,4 +161,4 @@ if __name__ == '__main__':
     # xgywSearch = XgywSearch()
     # xgywSearch.seed_process('过期米线线喵', 1)
     xgywPics = XgywPics()
-    xgywPics.seed_process('https://www.jpxgmn.net/IMiss/IMiss19680.html')
+    xgywPics.seed_process('https://www.jpxgyw.net/Xiuren/Xiuren21234.html')
