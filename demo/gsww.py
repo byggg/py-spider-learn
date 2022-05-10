@@ -10,16 +10,15 @@ import requests
 from pyquery import PyQuery
 
 
-class GswwRecommend(object):
+class GswwRecommend:
     """推荐页"""
 
     def __init__(self):
-        pass
+        self.gsww_util = GswwUtil()
 
     def seed_process(self, recommend_url):
-        utils = Utils()
         resp = self.get_resp(recommend_url)
-        self.parse_resp_html(resp, utils)
+        self.parse_resp_html(resp, self.gsww_util)
 
     def get_resp(self, req_url):
         headers = {
@@ -36,7 +35,7 @@ class GswwRecommend(object):
         resp.encoding = 'utf-8'
         return resp
 
-    def parse_resp_html(self, resp, utils):
+    def parse_resp_html(self, resp, gsww_util):
         doc = PyQuery(resp.text)
         current_page = doc('label#temppage').text()
         print('==== 第 %s 页 ====' % current_page)
@@ -87,16 +86,16 @@ class GswwRecommend(object):
                     li_mingju.append(single_gsw)
                 gsw = {'mingju_list': li_mingju}
             print(gsw)
-            # utils.save2mongo('test', 'gsw_recommend', gsw)
+            # gsww_util.save2mongo('test', 'gsw_recommend', gsw)
         # 判断翻页
         next_page = doc('a#amore').attr('href')
         if next_page:
             time.sleep(3)
             more_resp = self.get_resp(next_page)
-            self.parse_resp_html(more_resp, utils)
+            self.parse_resp_html(more_resp, gsww_util)
 
 
-class Utils(object):
+class GswwUtil:
     def __init__(self):
         pass
 
@@ -111,7 +110,7 @@ class Utils(object):
 
 if __name__ == '__main__':
     try:
-        gswwRecommend = GswwRecommend()
-        gswwRecommend.seed_process('https://www.gushiwen.cn')
+        gsww_recommend = GswwRecommend()
+        gsww_recommend.seed_process('https://www.gushiwen.cn')
     except:
         traceback.print_exc()
