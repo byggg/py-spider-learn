@@ -135,7 +135,7 @@ class XrmnUtil:
 
 
 if __name__ == '__main__':
-    xrmn_search = XrmnSearch()
-    xrmn_search.seed_process('超薄', 1)
-    # xrmn_pics = XrmnPics()
-    # xrmn_pics.seed_process('https://www.xrmn5.cc/XiuRen/2022/202210594.html')
+    # xrmn_search = XrmnSearch()
+    # xrmn_search.seed_process('超薄', 1)
+    xrmn_pics = XrmnPics()
+    xrmn_pics.seed_process('https://www.xrmn5.cc/XiuRen/2022/202210594.html')

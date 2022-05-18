@@ -101,7 +101,7 @@ class XgywPics:
         if page_no == 1:
             single_pages = ehtml.xpath("//div[@class='pagination']")[0]  # 存在2个pagination
             pages = single_pages.xpath("ul/a/@href")
-            for i in range(11, len(pages) - 1):
+            for i in range(1, len(pages) - 1):
                 more_detail_url = ROOT_PATH + pages[i]
                 self.process_pics_page(more_detail_url, detail_url, i + 1)
                 time.sleep(3)
