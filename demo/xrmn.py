@@ -122,13 +122,13 @@ class XrmnUtil:
         return resp
 
     def save2local(self, img_url, title, page_no, i):
-        file_dir = 'xrmn/' + title
+        file_dir = 'meinv/' + title
         isExists = os.path.exists(file_dir)
         if not isExists:  # 若目录不存在则创建
             os.makedirs(file_dir)
-            print(">>> %s 目录创建成功!" % file_dir)
+            print(">>> %s 目录创建成功" % file_dir)
         else:
-            print(">>> %s 目录已经存在!" % file_dir)
+            print(">>> %s 目录已存在" % file_dir)
         with open('%s/%d_%d.jpg' % (file_dir, page_no, i), 'wb') as f:
             resp = requests.get(img_url)
             f.write(resp.content)
@@ -136,6 +136,6 @@ class XrmnUtil:
 
 if __name__ == '__main__':
     # xrmn_search = XrmnSearch()
-    # xrmn_search.seed_process('超薄', 1)
+    # xrmn_search.seed_process('林星阑', 1)
     xrmn_pics = XrmnPics()
-    xrmn_pics.seed_process('https://www.xrmn5.cc/XiuRen/2022/202210594.html')
+    xrmn_pics.seed_process('https://www.xrmn5.cc/XiuRen/2022/202210218.html')

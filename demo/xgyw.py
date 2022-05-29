@@ -128,13 +128,13 @@ class XgywUtil:
         return resp
 
     def save2local(self, img_url, title, page_no, i):
-        file_dir = 'xgyw/' + title
+        file_dir = 'meinv/' + title
         is_exists = os.path.exists(file_dir)
         if not is_exists:  # 若目录不存在则创建
             os.makedirs(file_dir)
-            print(">>> %s 目录创建成功!" % file_dir)
+            print(">>> %s 目录创建成功" % file_dir)
         else:
-            print(">>> %s 目录已经存在!" % file_dir)
+            print(">>> %s 目录已存在" % file_dir)
         with open('%s/%d_%d.jpg' % (file_dir, page_no, i), 'wb') as f:
             resp = self.get_resp(img_url, ROOT_PATH)
             f.write(resp.content)
@@ -144,4 +144,4 @@ if __name__ == '__main__':
     # xgyw_search = XgywSearch()
     # xgyw_search.seed_process('可乐', 1)
     xgyw_pics = XgywPics()
-    xgyw_pics.seed_process('https://www.jpxgyw.vip/Xiuren/Xiuren19899.html')
+    xgyw_pics.seed_process('https://www.jpxgyw.vip/Xiuren/Xiuren21807.html')
