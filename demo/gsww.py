@@ -4,7 +4,7 @@
 # @Desc : 古诗文网（https://www.gushiwen.cn）
 
 import time
-import traceback
+
 import pymongo
 import requests
 from pyquery import PyQuery
@@ -23,7 +23,7 @@ class GswwRecommend:
     def get_resp(self, req_url):
         headers = {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'accept-encoding': 'gzip, deflate, br',
+            # 'accept-encoding': 'gzip, deflate, br', # 导致响应乱码
             'accept-language': 'zh,zh-CN;q=0.9',
             'upgrade-insecure-requests': '1',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
@@ -52,7 +52,8 @@ class GswwRecommend:
                 shiju_url = cont_img.find('div.jucount a').attr('href')
                 source = cont_img.find('div.sourceimg a').text()
                 source_url = cont_img.find('div.sourceimg a').attr('href')
-                gsw = {'img': img, 'img_url': img_url, 'shiju': shiju, 'shiju_url': shiju_url, 'source': source, 'source_url': source_url}
+                gsw = {'img': img, 'img_url': img_url, 'shiju': shiju, 'shiju_url': shiju_url, 'source': source,
+                       'source_url': source_url}
             elif sons('div.cont div.yizhu'):
                 cont = sons.find('div.cont')
                 poem_title = cont.find('p a b').text()
@@ -62,7 +63,8 @@ class GswwRecommend:
                 dynasty = cont.find('p.source a:nth-child(2)').text()
                 dynasty_url = cont.find("p.source a:nth-child(2)").attr('href')
                 contson = cont.find('div.contson').text()
-                gsw = {'poem_title': poem_title, 'poem_url': poem_url, 'author': author, 'author_url': author_url, 'dynasty': dynasty, 'dynasty_url': dynasty_url, 'contson': contson}
+                gsw = {'poem_title': poem_title, 'poem_url': poem_url, 'author': author, 'author_url': author_url,
+                       'dynasty': dynasty, 'dynasty_url': dynasty_url, 'contson': contson}
             elif sons('div.cont div.changshi'):
                 cont = sons.find('div.cont')
                 is_common = cont.find('div.changshi').text()
@@ -82,7 +84,8 @@ class GswwRecommend:
                     mingju_url = cont.find('a:nth-child(1)').attr('href')
                     source = cont.find('a:nth-child(3)').text()
                     source_url = cont.find('a:nth-child(3)').attr('href')
-                    single_gsw = {'mingju': mingju, 'mingju_url': mingju_url, 'source': source, 'source_url': source_url}
+                    single_gsw = {'mingju': mingju, 'mingju_url': mingju_url, 'source': source,
+                                  'source_url': source_url}
                     li_mingju.append(single_gsw)
                 gsw = {'mingju_list': li_mingju}
             print(gsw)
@@ -109,8 +112,5 @@ class GswwUtil:
 
 
 if __name__ == '__main__':
-    try:
-        gsww_recommend = GswwRecommend()
-        gsww_recommend.seed_process('https://www.gushiwen.cn')
-    except:
-        traceback.print_exc()
+    gsww_recommend = GswwRecommend()
+    gsww_recommend.seed_process('https://www.gushiwen.cn')
