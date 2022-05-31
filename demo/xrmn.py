@@ -21,7 +21,7 @@ class XrmnSearch:
         self.xrmn_util = XrmnUtil()
 
     def seed_process(self, keyword, page_limit):
-        search_url = '%s/plus/search/index.asp?keyword=%s' % (ROOT_PATH, keyword)
+        search_url = f'{ROOT_PATH}/plus/search/index.asp?keyword={keyword}'
         try:
             self.process_search_page(search_url, page_limit, 1)
         except Exception:
@@ -47,7 +47,7 @@ class XrmnSearch:
             len_hrefs = len(hrefs)
             page_count = page_limit if len_hrefs >= page_limit else len_hrefs
             for i in range(1, page_count):
-                more_search_url = '%s/plus/search/index.asp%s' % (ROOT_PATH, hrefs[i])
+                more_search_url = f'{ROOT_PATH}/plus/search/index.asp{hrefs[i]}'
                 self.process_search_page(more_search_url, page_limit, i + 1)
                 time.sleep(5)
 
@@ -105,6 +105,8 @@ class XrmnPics:
 
 
 class XrmnUtil:
+    """公共方法类"""
+
     def __init__(self):
         pass
 
@@ -126,16 +128,24 @@ class XrmnUtil:
         isExists = os.path.exists(file_dir)
         if not isExists:  # 若目录不存在则创建
             os.makedirs(file_dir)
-            print(">>> %s 目录创建成功" % file_dir)
+            print(f">>> {file_dir} 目录创建成功")
         else:
-            print(">>> %s 目录已存在" % file_dir)
-        with open('%s/%d_%d.jpg' % (file_dir, page_no, i), 'wb') as f:
+            print(f">>> {file_dir} 目录已存在")
+        with open(f'{file_dir}/{page_no}_{i}.jpg', 'wb') as f:
             resp = requests.get(img_url)
             f.write(resp.content)
 
 
+def call_xrmn(**kwargs):
+    if kwargs.get('keyword') is not None:
+        xrmn_search = XrmnSearch()
+        xrmn_search.seed_process(kwargs['keyword'], kwargs['page_limit'])
+    else:
+        xrmn_pics = XrmnPics()
+        xrmn_pics.seed_process(kwargs['detail_url'])
+
+
 if __name__ == '__main__':
-    # xrmn_search = XrmnSearch()
-    # xrmn_search.seed_process('林星阑', 1)
-    xrmn_pics = XrmnPics()
-    xrmn_pics.seed_process('https://www.xrmn5.cc/XiuRen/2022/202210218.html')
+    pass
+    # call_xrmn(keyword='林星阑', page_limit=1)
+    # call_xrmn(detail_url='https://www.xrmn5.cc/XiuRen/2021/20217151.html')

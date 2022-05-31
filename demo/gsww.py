@@ -38,7 +38,7 @@ class GswwRecommend:
     def parse_resp_html(self, resp, gsww_util):
         doc = PyQuery(resp.text)
         current_page = doc('label#temppage').text()
-        print('==== 第 %s 页 ====' % current_page)
+        print(f'==== 第 {current_page} 页 ====')
         # 解析当前页
         sons_list = doc('div.main3 div.left div.sons').items()
         # print(len(sons_list))

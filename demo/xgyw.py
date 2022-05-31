@@ -21,7 +21,7 @@ class XgywSearch:
         self.xgyw_util = XgywUtil()
 
     def seed_process(self, keyword, page_limit):
-        search_url = '%s/plus/search/index.asp?keyword=%s' % (ROOT_PATH, keyword)
+        search_url = f'{ROOT_PATH}/plus/search/index.asp?keyword={keyword}'
         try:
             self.process_search_page(search_url, ROOT_PATH, page_limit, 1)
         except Exception:
@@ -48,7 +48,7 @@ class XgywSearch:
             len_hrefs = len(hrefs)
             page_count = page_limit if len_hrefs >= page_limit else len_hrefs
             for i in range(1, page_count):
-                more_search_url = '%s/plus/search/index.asp%s' % (ROOT_PATH, hrefs[i])
+                more_search_url = f'{ROOT_PATH}/plus/search/index.asp{hrefs[i]}'
                 self.process_search_page(more_search_url, search_url, page_limit, i + 1)
                 time.sleep(5)
 
@@ -132,16 +132,24 @@ class XgywUtil:
         is_exists = os.path.exists(file_dir)
         if not is_exists:  # 若目录不存在则创建
             os.makedirs(file_dir)
-            print(">>> %s 目录创建成功" % file_dir)
+            print(f">>> {file_dir} 目录创建成功")
         else:
-            print(">>> %s 目录已存在" % file_dir)
-        with open('%s/%d_%d.jpg' % (file_dir, page_no, i), 'wb') as f:
+            print(f">>> {file_dir} 目录已存在")
+        with open(f'{file_dir}/{page_no}_{i}.jpg', 'wb') as f:
             resp = self.get_resp(img_url, ROOT_PATH)
             f.write(resp.content)
 
 
+def call_xgyw(**kwargs):
+    if kwargs.get('keyword') is not None:
+        xgyw_search = XgywSearch()
+        xgyw_search.seed_process(kwargs['keyword'], kwargs['page_limit'])
+    else:
+        xgyw_pics = XgywPics()
+        xgyw_pics.seed_process(kwargs['detail_url'])
+
+
 if __name__ == '__main__':
-    # xgyw_search = XgywSearch()
-    # xgyw_search.seed_process('可乐', 1)
-    xgyw_pics = XgywPics()
-    xgyw_pics.seed_process('https://www.jpxgyw.vip/Xiuren/Xiuren21807.html')
+    pass
+    # call_xgyw(keyword='可乐', page_limit=1)
+    # call_xgyw(detail_url='https://www.jpxgyw.vip/Xiuren/Xiuren16158.html')
