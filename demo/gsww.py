@@ -17,23 +17,8 @@ class GswwRecommend:
         self.gsww_util = GswwUtil()
 
     def seed_process(self, recommend_url):
-        resp = self.get_resp(recommend_url)
+        resp = self.gsww_util.get_resp(recommend_url)
         self.parse_resp_html(resp, self.gsww_util)
-
-    def get_resp(self, req_url):
-        headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            # 'accept-encoding': 'gzip, deflate, br', # 导致响应乱码
-            'accept-language': 'zh,zh-CN;q=0.9',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-        }
-        session = requests.Session()
-        # session.keep_alive = False
-        # session.adapters.DEFAULT_RETRIES = 5
-        resp = session.get(req_url, headers=headers, timeout=10)
-        resp.encoding = 'utf-8'
-        return resp
 
     def parse_resp_html(self, resp, gsww_util):
         doc = PyQuery(resp.text)
@@ -99,8 +84,25 @@ class GswwRecommend:
 
 
 class GswwUtil:
+    """公共方法类"""
+
     def __init__(self):
         pass
+
+    def get_resp(self, req_url):
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            # 'accept-encoding': 'gzip, deflate, br', # 导致响应乱码
+            'accept-language': 'zh,zh-CN;q=0.9',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+        }
+        session = requests.Session()
+        # session.keep_alive = False
+        # session.adapters.DEFAULT_RETRIES = 5
+        resp = session.get(req_url, headers=headers, timeout=10)
+        resp.encoding = 'utf-8'
+        return resp
 
     def save2mongo(self, db_name, collection_name, item):
         client = pymongo.MongoClient(host='localhost', port=27017)
@@ -112,5 +114,6 @@ class GswwUtil:
 
 
 if __name__ == '__main__':
-    gsww_recommend = GswwRecommend()
-    gsww_recommend.seed_process('https://www.gushiwen.cn')
+    pass
+    # gsww_recommend = GswwRecommend()
+    # gsww_recommend.seed_process('https://www.gushiwen.cn')
